@@ -6,7 +6,7 @@ const clientLine=(socket)=>{
     if(socket){
         const sessionid= localStorage.getItem('sessionid');
      
-        socket.emit(actions.question,{message: client.getMessage(), sessionid});
+        socket.emit(actions.question,client.getMessage());
         client.setmessagesChat(1,client.getMessage())
     }
 }

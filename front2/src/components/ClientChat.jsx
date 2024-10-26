@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import initionClient from "../utils/socket/initialClient.ts";
 import socket from "../utils/stores/socket.ts";
 import t from '../assets/Frame 6.png'
 import { io } from "socket.io-client";
@@ -13,9 +12,14 @@ const ClientChat = observer(()=>{
     useEffect(()=>{
         const yt = io(socketConfig.host)
         setSocket(yt)
-        yt.on('answer',(res)=>{
-            client.setmessagesChat(2,res.message)
+        yt.on('answer',(req)=>{
+            client.setmessagesChat(2,req.message)
         })
+        yt.emit('joinRoom')
+        yt.on('@getMessages',(req)=>{
+            yt.emit('getMessagesClient', client.getmessagesChat())
+        })
+       
     },[])
     return <div className="mini-chat">
         <div className="chat">
@@ -40,13 +44,22 @@ const ClientChat = observer(()=>{
             onChange={(e)=>{client.setMessage(e.target.value)}}
             onKeyDown={(e)=>{
                 if(e.key=='Enter'&& !e.shiftKey){
-                    clientLine(socket)
-                    client.setMessage('')
+                    if(client.getMessage().length>0){
+                        clientLine(socket)
+                        client.setMessage('')
+                    }
                 }
                 }}
             type="text"
             id=""></textarea>
-            <img src={t} alt="" />
+            <img src={t} alt="" onClick={(e)=>{
+                if(client.getMessage().length>0){
+                    clientLine(socket)
+                    client.setMessage('')
+                }
+                  
+                
+            }}/>
         </div>
     </div>
 })

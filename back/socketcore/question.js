@@ -1,12 +1,14 @@
 const { clientCheck } = require("../api/utils/clientCheck")
+const { Assistent } = require("../models/model")
 
 function question(socket,io){
     socket.on('question',(req)=>{
-       let api = [{
-        "issue_answer":"text"
-    }]
+       io.emit('@clientLabel',{message: req, client: socket.id})
+       io.to(socket.id).emit('@clientMessage',req)
+    })
 
-       socket.emit('answer',{message:api[0].issue_answer})
+    socket.on('joinRoom',async (req)=>{
+       
     })
 }
 module.exports={question}

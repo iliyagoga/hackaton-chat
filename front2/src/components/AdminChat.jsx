@@ -1,42 +1,83 @@
 import { useEffect, useState } from "react";
-import initionClient from "../utils/socket/initialClient.ts";
-import socket from "../utils/stores/socket.ts";
 import t from '../assets/Frame 6.png'
-import { io } from "socket.io-client";
-import { socketConfig } from "../utils/socket/config.ts";
+import assistent from "../utils/stores/assistent.ts";
+import socket from "../utils/stores/socket.ts";
 const { observer } = require("mobx-react-lite");
-const {default: client} =require( "../utils/stores/client.ts");
-const { default: clientLine } = require("../utils/socket/clientLine.ts");
+
 
 const AdminChat = observer(()=>{
     useEffect(()=>{
-        const yt = io(socketConfig.host)
-        yt.on('answer',(res)=>{
-            client.setmessagesChat(2,res.message)
-        })
-    },[])
+
+        if(socket.getSocket()){
+            const yt=socket.getSocket()
+            yt.emit('assistent','ttt')
+            yt.on('@clientMessage',(req)=>{
+                assistent.setmessagesChat(2, req)
+            })
+            yt.on('@allMessagesClient',(req)=>{
+                for(let message of req){
+                    if(message.c==1){
+                        message.c=2
+                    }else{
+                        message.c=1
+                    }
+                    console.log(message)
+                    assistent.setmessagesChat(message.c, message.messageChat)
+                }
+            })
+        }
+        
+
+    },[socket.getSocket()])
     return <div className="mini-chat">
         <div className="chat">
-            <div className="left">
-                <p>text</p>
-            </div>
-            <div className="right">
-                <p>text1</p>
-            </div>
+        {assistent.getmessagesChat()!=undefined?
+            (assistent.getmessagesChat().map(r=>{
+               if(r.c==2){
+                return <div className="left">
+                    <p>{r.messageChat}</p>
+                </div>
+               }else{
+                return <div className="right">
+                    <p>{r.messageChat}</p>
+                </div>
+               }
+            }))
+            :""}
         </div>
         <div className="textarea">
             <textarea 
             name="" 
-            value={client.getMessage()} 
-            onChange={(e)=>{client.setMessage(e.target.value)}}
+            value={assistent.getMessage()} 
+            onChange={(e)=>{assistent.setMessage(e.target.value)}}
             onKeyDown={(e)=>{
                 if(e.key=='Enter'&& !e.shiftKey){
-                    clientLine(socket)
+                    if(assistent.getMessage().length>0){
+                        if(assistent.getRoom()){
+                            if(socket.getSocket()){
+                                const yt=socket.getSocket()
+                                yt.emit('assistentMessage',{socketId:assistent.getRoom(),message:assistent.getMessage()})
+                                assistent.setmessagesChat(1,assistent.getMessage())
+                            }
+                        }
+                        assistent.setMessage('')
+                    }
                 }
                 }}
             type="text"
             id=""></textarea>
-            <img src={t} alt="" />
+            <img src={t} alt="" onClick={(e)=>{
+                if(assistent.getMessage().length>0){
+                    if(assistent.getRoom()){
+                        if(socket.getSocket()){
+                            const yt=socket.getSocket()
+                            yt.emit('assistentMessage',{socketId:assistent.getRoom(),message:assistent.getMessage()})
+                            assistent.setmessagesChat(1,assistent.getMessage())
+                        }   
+                    }
+                    assistent.setMessage('')
+             }
+            }} />
         </div>
     </div>
 })

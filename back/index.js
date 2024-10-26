@@ -1,6 +1,6 @@
 const express=require('express')
 require('dotenv').config()
-// const sequelize=require('./dbConfiguration')
+const sequelize=require('./dbConfiguration')
 const cors=require('cors')
 const models = require('./models/model')
 // const router = require('./router')
@@ -16,8 +16,8 @@ let io
 
 async function start(){
     try {
-        // await sequelize.authenticate()
-        // await sequelize.sync()
+        await sequelize.authenticate()
+        await sequelize.sync()
         app.timeout = 20000
         let server=app.listen(5000,()=>{console.log('Сервер запущен')})
         io=require('socket.io')(server,{
@@ -26,7 +26,7 @@ async function start(){
             }
           })
           // io.use((socket,next)=>{socketTokenValid(socket,next)})
-        io.on('connection',(socket)=>onConnection(socket,io))
+        io.sockets.on('connection',(socket)=>onConnection(socket,io))
     } catch (error) {
         console.log(error)
     }
