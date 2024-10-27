@@ -21,7 +21,10 @@ const ClientChat = observer(()=>{
         })
        
     },[])
-    return <div className="mini-chat">
+    return <div className="u">
+
+   
+    <div className="mini-chat">
         <div className="chat">
             {client.getmessagesChat()!=undefined?
             (client.getmessagesChat().map(r=>{
@@ -62,5 +65,6 @@ const ClientChat = observer(()=>{
             }}/>
         </div>
     </div>
+    </div> 
 })
 export default ClientChat

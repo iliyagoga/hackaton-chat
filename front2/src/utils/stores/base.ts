@@ -1,6 +1,6 @@
 import { makeAutoObservable} from 'mobx'
 class BaseStore{
-    private _base: any[];
+    private _base: any[] =[];
 
     constructor(){
         makeAutoObservable(this)

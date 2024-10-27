@@ -1,5 +1,4 @@
-const { clientCheck } = require("../api/utils/clientCheck")
-const { Assistent } = require("../models/model")
+
 
 function question(socket,io){
     socket.on('question',(req)=>{

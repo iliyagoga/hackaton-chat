@@ -14,15 +14,21 @@ const Base = observer(()=>{
             }}
             onKeyDown={async (e)=>{
                 if(e.key=='Enter'&& !e.shiftKey){
-                    const list = await axios.get(config.base+config.analyze,{body:value})
-                    console.log(list)
+                    const list = await fetch(config.base+config.analyze, {
+                        method: 'POST',
+                        
+                        body:value})
+                    const res= await list.json()
+                        base.setBase(res)
                 }
             }}/>
         </div>
         <div className="list">
-            {base.map(v=>{
-                console.log(v)
-            })}
+          {base.getBase().length>0?base.getBase().map(v=>{
+            return <div className="base-label">
+                <span>{v.issue_answer}</span>
+            </div>
+          }):''}
         </div>
     </div>
 })

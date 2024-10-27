@@ -1,17 +1,7 @@
-const { getValue, setValue } = require("node-global-storage");
-const { Assistent } = require("../models/model");
+
 const assistent=  (socket,io)=>{
     let assistent=null
     socket.on('assistent',async (req)=>{
-        const c= await Assistent.count()
-        if(c>0){
-            const user= await Assistent.findAll({limit:1})
-
-            Assistent.update({socketId:socket.id},{where:{id:user[0].id}})
-            
-        }else{
-           Assistent.create({socketId:socket.id})
-        }
        
     })
 

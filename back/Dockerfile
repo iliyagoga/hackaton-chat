@@ -16,7 +16,6 @@ COPY . .
 # Устанавливаем среду выполнения
 ENV NODE_ENV=production
 
-EXPOSE 5000
-
+EXPOSE 5005
 # Запускаем приложение
 CMD ["node", "index.js"]
